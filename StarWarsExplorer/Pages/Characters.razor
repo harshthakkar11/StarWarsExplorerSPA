@@ -8,7 +8,7 @@
 </div>
 
 <div class="search-section">
-    <input class="search-box" @bind="searchTerm" @bind:event="oninput" placeholder="Search characters..." />
+    <input class="search-box" @oninput="OnSearchInput" placeholder="Search characters..." />
 </div>
 
 @if (isLoading)
@@ -51,7 +51,7 @@ else
 
     void OnSearchInput(ChangeEventArgs e)
     {
-        searchTerm = e.Value.ToString();
+        searchTerm = e.Value?.ToString() ?? "";
 
         debounceTimer?.Stop();
         debounceTimer = new System.Timers.Timer(400);
@@ -60,6 +60,7 @@ else
             debounceTimer?.Stop();
             await InvokeAsync(Search);
         };
+        debounceTimer.AutoReset = false;
         debounceTimer.Start();
     }
 
@@ -71,5 +72,6 @@ else
             .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
             .ToList();
         isLoading = false;
+        StateHasChanged();
     }
 }
