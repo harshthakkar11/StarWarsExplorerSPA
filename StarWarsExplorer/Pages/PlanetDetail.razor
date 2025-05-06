@@ -5,18 +5,30 @@
 @code {
     [Parameter] public string id { get; set; }
     Planet planet;
+    bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         planet = await Api.GetPlanetByIdAsync(id);
+        isLoading = false;
     }
 }
 
-@if (planet != null)
+@if (isLoading)
 {
-    <h3><b>@planet.Properties.Name</b></h3>
-    <p><b>Climate:</b> @planet.Properties.Climate</p>
-    <p><b>Diameter:</b> @planet.Properties.Diameter</p>
-    <p><b>Terrain:</b> @planet.Properties.Terrain</p>
-    <p><b>Population:</b> @planet.Properties.Population</p>
+    <div class="loader">Loading planet details...</div>
+}
+else if (planet != null)
+{
+    <div class="character-detail-container">
+        <div class="character-card-detail">
+            <h2 class="character-name">@planet.Properties.Name</h2>
+            <ul class="character-attributes">
+                <li><span>Climate:</span> @planet.Properties.Climate</li>
+                <li><span>Diameter:</span> @planet.Properties.Diameter</li>
+                <li><span>Terrain:</span> @planet.Properties.Terrain</li>
+                <li><span>Population:</span> @planet.Properties.Population</li>
+            </ul>
+        </div>
+    </div>
 }

@@ -2,22 +2,6 @@
 @inject SwapiService Api
 @using StarWarsExplorer.Models
 
-<h3><b>Species</b></h3>
-
-@if (speciesList == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <ul>
-        @foreach (var species in speciesList)
-        {
-            <li><a href="/species/@species.Uid">@species.Name</a></li>
-        }
-    </ul>
-}
-
 @code {
     List<Species> speciesList;
 
@@ -25,4 +9,22 @@ else
     {
         speciesList = await Api.GetSpeciesAsync();
     }
+}
+
+<h3 class="page-heading">Species</h3>
+
+@if (speciesList == null)
+{
+    <div class="loader">Loading species...</div>
+}
+else
+{
+    <div class="character-list-container">
+        @foreach (var species in speciesList)
+        {
+            <div class="character-card">
+                <a href="/species/@species.Uid" class="character-link">@species.Name</a>
+            </div>
+        }
+    </div>
 }

@@ -5,21 +5,29 @@
 @code {
     [Parameter] public string id { get; set; }
     Species species;
+    bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         species = await Api.GetSpeciesByIdAsync(id);
+        isLoading = false;
     }
 }
 
-@if (species != null)
+@if (isLoading)
 {
-    <h3><b>@species.Properties.Name</b></h3>
-    <p><b>Classification:</b> @species.Properties.Classification</p>
-    <p><b>Language:</b> @species.Properties.Language</p>
-    <p><b>Designation:</b> @species.Properties.Designation</p>
+    <div class="loader">Loading species...</div>
 }
-else
+else if (species != null)
 {
-    <p>Loading species...</p>
+    <div class="character-detail-container">
+        <div class="character-card-detail">
+            <h2 class="character-name">@species.Properties.Name</h2>
+            <ul class="character-attributes">
+                <li><span>Classification:</span> @species.Properties.Classification</li>
+                <li><span>Language:</span> @species.Properties.Language</li>
+                <li><span>Designation:</span> @species.Properties.Designation</li>
+            </ul>
+        </div>
+    </div>
 }

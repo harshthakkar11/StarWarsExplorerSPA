@@ -1,23 +1,39 @@
 ﻿@page "/character/{id}"
 @inject SwapiService Api
 @using StarWarsExplorer.Models
+@using System.Web
 
 @code {
     [Parameter] public string id { get; set; }
     Character character;
+    bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         character = await Api.GetCharacterByIdAsync(id);
+        isLoading = false;
     }
 }
 
-@if (character != null)
+@if (isLoading)
 {
-    <h3><b>@character.Properties.Name</b></h3>
-    <p><b>Gender:</b> @character.Properties.Gender</p>
-    <p><b>Birth Year:</b> @character.Properties.BirthYear</p>
-    <p><b>Height:</b> @character.Properties.Height</p>
-    <p><b>Mass:</b> @character.Properties.Mass</p>  
-    <p><b>Homeworld:</b> <a href="/planets/@character.Properties.Homeworld.Split('/').Last()">View Planet</a></p>
+    <div class="loader">Loading character...</div>
+}
+else if (character != null)
+{
+    <div class="character-detail-container">
+        <div class="character-card-detail">
+            <h2 class="character-name">@character.Properties.Name</h2>
+            <ul class="character-attributes">
+                <li><span>Gender:</span> @character.Properties.Gender</li>
+                <li><span>Birth Year:</span> @character.Properties.BirthYear</li>
+                <li><span>Height:</span> @character.Properties.Height</li>
+                <li><span>Mass:</span> @character.Properties.Mass</li>
+                <li>
+                    <span>Homeworld:</span>
+                    <a href="/planets/@character.Properties.Homeworld.Split('/').Last()">View Planet</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 }

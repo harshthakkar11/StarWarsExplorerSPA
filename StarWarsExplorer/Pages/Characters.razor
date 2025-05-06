@@ -2,30 +2,74 @@
 @inject SwapiService Api
 @using StarWarsExplorer.Models
 
-<h3><b>Characters</b></h3>
+<div class="hero-banner">
+    <h1 class="hero-title">Explore the Galaxy</h1>
+    <p class="hero-subtitle">Discover your favorite Star Wars characters</p>
+</div>
 
-<input @bind="searchTerm" placeholder="Search characters..." />
-<button @onclick="Search">Search</button>
+<div class="search-section">
+    <input class="search-box" @bind="searchTerm" @bind:event="oninput" placeholder="Search characters..." />
+</div>
 
-<ul>
-    @foreach (var character in characters)
-    {
-        <li><a href="/character/@character.Uid">@character.Name</a></li>
-    }
-</ul>
+@if (isLoading)
+{
+    <div class="loader">Loading characters...</div>
+}
+else if (!characters.Any())
+{
+    <p class="no-results">No characters found.</p>
+}
+else
+{
+    <div class="character-grid">
+        @foreach (var character in characters)
+        {
+            <div class="character-card">
+                <a href="/character/@character.Uid">@character.Name</a>
+            </div>
+        }
+    </div>
+}
 
 @code {
     string searchTerm = "";
     List<Character> characters = new();
+    bool isLoading = true;
+    private System.Timers.Timer debounceTimer;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCharacters();
+    }
+
+    async Task LoadCharacters()
+    {
+        isLoading = true;
         characters = await Api.GetCharactersAsync();
+        isLoading = false;
+    }
+
+    void OnSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+
+        debounceTimer?.Stop();
+        debounceTimer = new System.Timers.Timer(400);
+        debounceTimer.Elapsed += async (_, _) =>
+        {
+            debounceTimer?.Stop();
+            await InvokeAsync(Search);
+        };
+        debounceTimer.Start();
     }
 
     async Task Search()
     {
+        isLoading = true;
         var result = await Api.GetCharactersAsync();
-        characters = result.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        characters = result
+            .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        isLoading = false;
     }
 }
