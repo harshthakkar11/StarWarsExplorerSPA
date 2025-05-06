@@ -1,0 +1,31 @@
+﻿@page "/characters"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+<h3><b>Characters</b></h3>
+
+<input @bind="searchTerm" placeholder="Search characters..." />
+<button @onclick="Search">Search</button>
+
+<ul>
+    @foreach (var character in characters)
+    {
+        <li><a href="/character/@character.Uid">@character.Name</a></li>
+    }
+</ul>
+
+@code {
+    string searchTerm = "";
+    List<Character> characters = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        characters = await Api.GetCharactersAsync();
+    }
+
+    async Task Search()
+    {
+        var result = await Api.GetCharactersAsync();
+        characters = result.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+}

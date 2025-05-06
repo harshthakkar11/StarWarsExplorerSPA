@@ -1,0 +1,25 @@
+﻿@page "/species/{id}"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+@code {
+    [Parameter] public string id { get; set; }
+    Species species;
+
+    protected override async Task OnInitializedAsync()
+    {
+        species = await Api.GetSpeciesByIdAsync(id);
+    }
+}
+
+@if (species != null)
+{
+    <h3><b>@species.Properties.Name</b></h3>
+    <p><b>Classification:</b> @species.Properties.Classification</p>
+    <p><b>Language:</b> @species.Properties.Language</p>
+    <p><b>Designation:</b> @species.Properties.Designation</p>
+}
+else
+{
+    <p>Loading species...</p>
+}

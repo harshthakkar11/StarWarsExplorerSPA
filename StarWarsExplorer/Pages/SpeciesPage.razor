@@ -1,0 +1,28 @@
+﻿@page "/species"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+<h3><b>Species</b></h3>
+
+@if (speciesList == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var species in speciesList)
+        {
+            <li><a href="/species/@species.Uid">@species.Name</a></li>
+        }
+    </ul>
+}
+
+@code {
+    List<Species> speciesList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        speciesList = await Api.GetSpeciesAsync();
+    }
+}

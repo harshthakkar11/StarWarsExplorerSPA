@@ -1,0 +1,22 @@
+﻿@page "/planets/{id}"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+@code {
+    [Parameter] public string id { get; set; }
+    Planet planet;
+
+    protected override async Task OnInitializedAsync()
+    {
+        planet = await Api.GetPlanetByIdAsync(id);
+    }
+}
+
+@if (planet != null)
+{
+    <h3><b>@planet.Properties.Name</b></h3>
+    <p><b>Climate:</b> @planet.Properties.Climate</p>
+    <p><b>Diameter:</b> @planet.Properties.Diameter</p>
+    <p><b>Terrain:</b> @planet.Properties.Terrain</p>
+    <p><b>Population:</b> @planet.Properties.Population</p>
+}

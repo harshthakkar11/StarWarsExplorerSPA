@@ -1,0 +1,23 @@
+﻿@page "/character/{id}"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+@code {
+    [Parameter] public string id { get; set; }
+    Character character;
+
+    protected override async Task OnInitializedAsync()
+    {
+        character = await Api.GetCharacterByIdAsync(id);
+    }
+}
+
+@if (character != null)
+{
+    <h3><b>@character.Properties.Name</b></h3>
+    <p><b>Gender:</b> @character.Properties.Gender</p>
+    <p><b>Birth Year:</b> @character.Properties.BirthYear</p>
+    <p><b>Height:</b> @character.Properties.Height</p>
+    <p><b>Mass:</b> @character.Properties.Mass</p>  
+    <p><b>Homeworld:</b> <a href="/planets/@character.Properties.Homeworld.Split('/').Last()">View Planet</a></p>
+}

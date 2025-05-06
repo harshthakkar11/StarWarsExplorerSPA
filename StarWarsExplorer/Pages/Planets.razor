@@ -1,0 +1,28 @@
+﻿@page "/planets"
+@inject SwapiService Api
+@using StarWarsExplorer.Models
+
+<h3><b>Planets</b></h3>
+
+@if (planets == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var planet in planets)
+        {
+            <li><a href="/planets/@planet.Uid">@planet.Name</a></li>
+        }
+    </ul>
+}
+
+@code {
+    List<Planet> planets;   
+
+    protected override async Task OnInitializedAsync()
+    {
+        planets = await Api.GetPlanetsAsync();
+    }
+}
